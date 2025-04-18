@@ -4,57 +4,52 @@
       <h1>我的收藏</h1>
     </div>
 
-    <div class="favorites-list" v-if="favorites.length > 0">
+    <div class="favorites-list">
       <div v-for="item in favorites" :key="item.id" class="institution-card">
-        <div class="card-tag" :class="item.type === '公办' ? 'public' : item.type === '医养结合' ? 'medical' : 'private'">{{ item.type }}</div>
-        <h3>{{ item.name }}</h3>
-        <div class="location">{{ item.district }}</div>
-        <div class="info">
-          <el-rate v-model="item.rating" disabled text-color="#ff9900" />
-          <span class="distance">距离{{ item.distance }}km</span>
+        <div class="card-tag" :class="item.type === '公办' ? 'public' : item.type === '公建民营' ? 'mixed' : 'private'">
+          {{ item.type }}
         </div>
-        <div class="price">¥{{ item.price }}/月</div>
+        <h3>{{ item.name }}</h3>
+        <div class="location">
+          <i class="el-icon-location"></i>
+          {{ item.district }}
+        </div>
+        <div class="info">
+          <div class="rating">
+            <i class="el-icon-star-on"></i>
+            {{ item.rating }}
+          </div>
+          <div class="operation-status" :class="item.operationStatus === '运营中' ? 'operating' : 'not-operating'">
+            {{ item.operationStatus }}
+          </div>
+        </div>
+        <div class="price" v-if="item.price">
+          ¥{{ item.price }}/月
+        </div>
+        <div class="price" v-else>
+          暂无价格信息
+        </div>
         <div class="action-buttons">
-          <el-button type="primary" @click="$router.push(`/detail/${item.id}`)">查看详情</el-button>
-          <el-button type="danger" plain @click="removeFavorite(item.id)">取消收藏</el-button>
+          <el-button type="primary" size="small" @click="viewDetail(item.id)">查看详情</el-button>
+          <el-button type="danger" size="small" @click="removeFavorite(item.id)">取消收藏</el-button>
         </div>
       </div>
-    </div>
 
-    <div class="empty-state" v-else>
-      <el-empty description="暂无收藏的养老机构">
-        <el-button type="primary" @click="$router.push('/list')">去发现机构</el-button>
-      </el-empty>
+      <div v-if="favorites.length === 0" class="empty-state">
+        <el-empty description="暂无收藏的机构" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { favorites, removeFavorite } from '../data/favorites'
+import { useRouter } from 'vue-router'
 
-const favorites = ref([
-  {
-    id: 1,
-    name: '石家庄市老年公寓',
-    district: '长安区',
-    type: '公办',
-    rating: 4.2,
-    distance: 1.2,
-    price: '1500-3000'
-  },
-  {
-    id: 2,
-    name: '康乐老年护理中心',
-    district: '裕华区',
-    type: '医养结合',
-    rating: 4.8,
-    distance: 2.5,
-    price: '2500-4500'
-  }
-])
+const router = useRouter()
 
-const removeFavorite = (id) => {
-  favorites.value = favorites.value.filter(item => item.id !== id)
+const viewDetail = (id) => {
+  router.push(`/detail/${id}`)
 }
 </script>
 

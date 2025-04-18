@@ -41,9 +41,10 @@
 <style scoped>
 .social-links {
   position: fixed;
-  top: 20px;
+  top: 120px;
   right: 20px;
   display: flex;
+  flex-direction: column;
   gap: 15px;
   z-index: 100;
 }

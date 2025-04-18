@@ -1,11 +1,11 @@
 <template>
-  <div class="profile-page">
+  <div class="profile-page" v-if="userStore.user">
     <div class="user-info">
       <div class="avatar">
-        <el-avatar :size="80" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
+        <el-avatar :size="80" icon="el-icon-user" />
       </div>
-      <h2>用户昵称</h2>
-      <p class="user-id">ID: 888888</p>
+      <h2>{{ userStore.user.email }}</h2>
+      <p class="user-id">ID: {{ userStore.user.id }}</p>
     </div>
 
     <div class="menu-list">
@@ -70,12 +70,20 @@
       </div>
     </div>
 
-    <el-button type="danger" plain class="logout-btn">退出登录</el-button>
+    <el-button type="danger" plain class="logout-btn" @click="handleLogout">退出登录</el-button>
+  </div>
+
+  <div v-else class="login-prompt">
+    <p>请先登录以查看个人信息</p>
+    <el-button type="primary" @click="$router.push('/login')">去登录</el-button>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '../stores/user'
+import { ElMessage } from 'element-plus'
 import {
   Calendar,
   Timer,
@@ -86,7 +94,24 @@ import {
   ArrowRight
 } from '@element-plus/icons-vue'
 
+const router = useRouter()
+const userStore = useUserStore()
 const notifications = ref(true)
+
+const loading = ref(false)
+
+const handleLogout = async () => {
+  loading.value = true
+  try {
+    await userStore.logout()
+    ElMessage.success('已退出登录')
+    router.push('/login')
+  } catch (error) {
+    ElMessage.error(error.message || '退出登录失败，请重试')
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -94,6 +119,18 @@ const notifications = ref(true)
   min-height: 100vh;
   background: #f5f7fa;
   padding-bottom: 60px;
+}
+
+.login-prompt {
+  text-align: center;
+  padding: 40px 20px;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.login-prompt p {
+  color: #909399;
+  margin-bottom: 20px;
 }
 
 .user-info {

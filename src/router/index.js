@@ -1,8 +1,19 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { getCurrentUser } from '../utils/auth'
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/Login.vue')
+    },
+    {
+      path: '/signup',
+      name: 'Signup',
+      component: () => import('../views/Signup.vue')
+    },
     {
       path: '/',
       name: 'Home',
@@ -29,6 +40,19 @@ const router = createRouter({
       component: () => import('../views/Profile.vue')
     }
   ]
+})
+
+// 路由守卫
+router.beforeEach(async (to, from, next) => {
+  const { user } = await getCurrentUser()
+  const publicPages = ['/', '/login', '/signup', '/list', '/detail']
+  const authRequired = !publicPages.includes(to.path)
+
+  if (authRequired && !user) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router

@@ -48,7 +48,7 @@ export const institutions = [
     beds: '201-300',
     type: '民办',
     roomTypes: ['单人间', '两人间', '多人间'],
-    services: ['医养结合（至少有社区医院）', '中医药膳', '室内摄像头'],
+    services: ['医养结合（至少有社区医院）', '中医药膳', '室内有摄像头'],
     rating: '暂无'
   },
   {
@@ -127,7 +127,7 @@ export const institutions = [
     type: '公建民营',
     roomTypes: [],
     services: [],
-    rating: '四级'
+    rating: '暂无'
   },
   {
     id: 11,
@@ -244,7 +244,7 @@ export const institutions = [
     type: '公建民营',
     roomTypes: ['单人间', '两人间'],
     services: [],
-    rating: '四级'
+    rating: '暂无'
   },
   {
     id: 20,
@@ -257,7 +257,7 @@ export const institutions = [
     type: '民办',
     roomTypes: ['单人间', '两人间'],
     services: ['医养结合（至少有社区医院）', '民族餐'],
-    rating: '五级'
+    rating: '暂无'
   },
   {
     id: 21,
@@ -348,7 +348,7 @@ export const institutions = [
     beds: '101-200',
     type: '民办',
     roomTypes: [],
-    services: ['医养结合以医为主'],
+    services: ['医养结合（至少有社区医院）'],
     rating: '三级'
   },
   {
@@ -361,7 +361,7 @@ export const institutions = [
     beds: null,
     type: '民办',
     roomTypes: ['两人间', '多人间', '多人套间（包套）'],
-    services: ['医养结合以医为主', '认知照护'],
+    services: ['医养结合（至少有社区医院）', '认知照护'],
     rating: '四级'
   },
   {

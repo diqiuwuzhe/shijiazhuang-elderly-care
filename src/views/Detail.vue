@@ -2,9 +2,17 @@
   <div class="detail-page">
     <div class="institution-info">
       <div class="header">
-        <h2>{{ institution.name }}</h2>
-        <div class="status-tag" :class="institution.operationStatus === '运营中' ? 'operating' : 'not-operating'">{{ institution.operationStatus }}</div>
-        <div class="tag" :class="institution.type === '公办' ? 'public' : institution.type === '公建民营' ? 'mixed' : 'private'">{{ institution.type }}</div>
+        <div class="title-section">
+          <el-button
+            class="favorite-btn"
+            :type="isFavorited ? 'danger' : 'default'"
+            :icon="isFavorited ? 'Star' : 'StarFilled'"
+            @click="toggleFavorite"
+          >收藏</el-button>
+          <h2>{{ institution.name }}</h2>
+          <div class="status-tag" :class="institution.operationStatus === '运营中' ? 'operating' : 'not-operating'">{{ institution.operationStatus }}</div>
+          <div class="tag" :class="institution.type === '公办' ? 'public' : institution.type === '公建民营' ? 'mixed' : 'private'">{{ institution.type }}</div>
+        </div>
       </div>
 
       <div class="mode-info">
@@ -54,24 +62,27 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { institutions } from '../data/institutions.js'
+import { institutions } from '../data/institutions'
+import { favorites, addFavorite, removeFavorite, isFavorite } from '../data/favorites'
 
 const route = useRoute()
-const institution = ref({})
+const institution = ref(institutions.find(item => item.id === Number(route.params.id)) || {})
+
+const isFavorited = computed(() => isFavorite(institution.value.id))
+
+const toggleFavorite = () => {
+  if (isFavorited.value) {
+    removeFavorite(institution.value.id)
+  } else {
+    addFavorite(institution.value)
+  }
+}
 
 const makePhoneCall = () => {
   window.location.href = `tel:16630134340`
 }
-
-onMounted(() => {
-  const id = parseInt(route.params.id)
-  const found = institutions.find(item => item.id === id)
-  if (found) {
-    institution.value = found
-  }
-})
 </script>
 
 <style scoped>
@@ -97,10 +108,20 @@ onMounted(() => {
   padding-right: 100px;
 }
 
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .header h2 {
   margin: 0;
   font-size: 24px;
   font-weight: bold;
+}
+
+.favorite-btn {
+  margin-right: 10px;
 }
 
 .status-tag {
@@ -154,6 +175,13 @@ onMounted(() => {
   font-size: 16px;
   color: #E6A23C;
   font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.favorite-btn {
+  margin-right: 10px;
 }
 
 .basic-info {

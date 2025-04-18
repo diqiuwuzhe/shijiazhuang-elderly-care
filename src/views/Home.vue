@@ -7,7 +7,31 @@
           v-model="searchText"
           placeholder="搜索养老机构名称"
           :prefix-icon="Search"
+          clearable
         />
+      </div>
+      <!-- 搜索结果展示 -->
+      <div v-if="showSearchResults" class="search-results">
+        <div v-if="searchResults.length > 0" class="institution-list">
+          <div class="institution-card" v-for="item in searchResults" :key="item.id" @click="$router.push(`/detail/${item.id}`)">
+            <div class="card-tag" :class="item.type === '公办' ? 'public' : item.type === '公建民营' ? 'mixed' : 'private'">{{ item.type }}</div>
+            <h3>{{ item.name }}</h3>
+            <div class="location">{{ item.district }}</div>
+            <div class="mode-tags">
+              <el-tag v-for="mode in (Array.isArray(item.mode) ? item.mode : [item.mode])" :key="mode" size="small" effect="plain">{{ mode }}</el-tag>
+            </div>
+            <div class="info">
+              <div class="rating">星级：{{ item.rating }}</div>
+              <div class="beds" v-if="item.beds">床位：{{ item.beds }}</div>
+            </div>
+            <div class="price" v-if="item.price">¥{{ item.price }}+/月</div>
+            <div class="price" v-else>价格待定</div>
+            <el-button type="primary" class="contact-btn" @click.stop="makePhoneCall">一键通话</el-button>
+          </div>
+        </div>
+        <div v-else class="no-results">
+          <el-empty description="未找到相关机构" />
+        </div>
       </div>
     </div>
 
@@ -54,13 +78,30 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Search, HomeFilled, Discount, Star } from '@element-plus/icons-vue'
 import { institutions } from '../data/institutions.js'
 
 const searchText = ref('')
+const searchResults = ref([])
+const showSearchResults = ref(false)
 
 const featuredInstitutions = ref(institutions.filter(item => item.featured))
+
+// 监听搜索文本变化
+watch(searchText, (newValue) => {
+  if (newValue.trim() === '') {
+    searchResults.value = []
+    showSearchResults.value = false
+    return
+  }
+  
+  const results = institutions.filter(item =>
+    item.name.toLowerCase().includes(newValue.toLowerCase())
+  )
+  searchResults.value = results
+  showSearchResults.value = true
+})
 
 const makePhoneCall = () => {
   window.location.href = `tel:16630134340`
@@ -77,6 +118,15 @@ const makePhoneCall = () => {
 .header {
   text-align: center;
   margin-bottom: 20px;
+}
+
+.search-results {
+  margin-top: 20px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px;
 }
 
 .header h1 {
